@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 .env
 
 # Created by https://www.gitignore.io/api/node,osx,linux
 
 ### Node ###
+=======
+>>>>>>> 0c6e5314222f2af718f7f415b37e0889ffe10b7e
 # Logs
 logs
 *.log
@@ -19,6 +22,12 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+<<<<<<< HEAD
+=======
+# nyc test coverage
+.nyc_output
+
+>>>>>>> 0c6e5314222f2af718f7f415b37e0889ffe10b7e
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
@@ -37,6 +46,7 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+<<<<<<< HEAD
 
 
 ### OSX ###
@@ -78,3 +88,5 @@ Temporary Items
 
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
+=======
+>>>>>>> 0c6e5314222f2af718f7f415b37e0889ffe10b7e
