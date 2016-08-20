@@ -4,7 +4,9 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('./config/ppConfig');
 var flash = require('connect-flash');
+var request = require('request');
 var isLoggedIn = require('./middleware/isLoggedIn');
+
 var app = express();
 
 app.set('view engine', 'ejs');
@@ -31,7 +33,17 @@ app.use(function(req,res,next){
 });
 
 app.get('/', function(req, res) {
-  res.render('index');
+  request('http://cache.kexp.org/cache/latestPlay', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      //console.log(req.body.count);
+      var data = JSON.parse(body);
+      var song = data.Plays[0];
+      res.render('index', {song: song});
+    }
+    else{
+      res.render('index');
+    }
+  });
 });
 
 app.get('/profile', isLoggedIn, function(req, res) {
