@@ -1,9 +1,24 @@
 <h2>Now Playing</h2>
 
-<div class="well"> 
-<h3> <%= song.Artist.Name %></h3>
-<h4> <%= song.Track.Name %></h4>
+<div class="well">
+<h3> <%= currentSong.Artist.Name %> - <%= currentSong.Track.Name %></h3>
 </div>
+
+<div class="row">
+<div class="col-md-8">
+  <div class="well">
+  <% recentPlays.Plays.forEach(function(song){ %>
+  <% if(song.Artist) { %>
+  <h4> <a href="/addfav/<%=song.Uri%>" class="btn btn-danger"> <i class="fa fa-heart"></i> </a>  <%=  song.Artist.Name %> - <%=  song.Track.Name %> </h4>
+
+  <hr>
+   <% } %>
+  <% }); %>
+  </div>
+
+</div>
+</div>
+
 
 <a href="/auth/signup">Signup</a>
 <a href="/auth/login">Login</a>

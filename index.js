@@ -6,6 +6,7 @@ var passport = require('./config/ppConfig');
 var flash = require('connect-flash');
 var request = require('request');
 var isLoggedIn = require('./middleware/isLoggedIn');
+var async = require('async');
 
 var app = express();
 
@@ -32,17 +33,37 @@ app.use(function(req,res,next){
   next();
 });
 
-app.get('/', function(req, res) {
+function getCurrentTrack(callback){
+  var currentSong;
   request('http://cache.kexp.org/cache/latestPlay', function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      //console.log(req.body.count);
-      var data = JSON.parse(body);
-      var song = data.Plays[0];
-      res.render('index', {song: song});
+      data = JSON.parse(body);
+      currentSong = data.Plays[0];
+      callback(null, currentSong);
     }
     else{
-      res.render('index');
+      callback(error, currentSong);
     }
+  });
+  
+}
+
+function getLatestPlays(callback){
+  var recentPlays;
+  request('http://cache.kexp.org/cache/recentPlays', function(error, response, body) {
+      if(!error && response.statusCode == 200){
+        recentPlays = JSON.parse(body);
+        callback(null, recentPlays);
+      }
+      else{
+        callback(error, recentPlays);
+      }
+  });
+}
+
+app.get('/', function(req, res) {
+  async.series([getCurrentTrack, getLatestPlays], function(err, results){
+    res.render('index', {currentSong: results[0], recentPlays: results[1]});
   });
 });
 
