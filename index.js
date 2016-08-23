@@ -7,8 +7,17 @@ var flash = require('connect-flash');
 var request = require('request');
 var isLoggedIn = require('./middleware/isLoggedIn');
 var async = require('async');
+var fs = require('fs');
+var frontend = require('./public/js/frontend');
+var $ = require('jQuery');
+
+//require('events').EventEmitter.prototype._maxListeners = 100;
 
 var app = express();
+
+var http = require('http').Server(app);
+
+var io = require('socket.io')(http);
 
 app.set('view engine', 'ejs');
 
@@ -71,11 +80,38 @@ app.get('/profile', isLoggedIn, function(req, res) {
   res.render('profile');
 });
 
+app.get('/addfav/:date', function(req, res){
+  console.log('clicked fav button');
+  console.log(getDateNumber(req.params.date));
+});
+
 app.use('/auth', require('./controllers/auth'));
 
-var server = app.listen(process.env.PORT || 3000);
+//var server = app.listen(process.env.PORT || 3000);
 
-module.exports = server;
+//module.exports = server;
+
+
+function getDateNumber(dateData){
+  return dateData[0].match(/[0-9]+/g);
+}
+
+
+io.on('connection', function (socket) {
+  socket.emit('news', function(){
+    console.log("connection on");
+  });
+  socket.on('my other event', function (data) {
+    console.log("index.js" + data);
+  });
+});
+
+var PORT = process.env.PORT || 3000;
+
+http.listen(PORT, function() {
+  console.log('Running server on ' + PORT);
+});
+
 
 /*
 GET /
