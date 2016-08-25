@@ -73,29 +73,51 @@ function getLatestPlays(callback){
   });
 }
 
+function getFavorites(callback){
+  var favoriteList;
+  db.user.findOne({where: {id: process.env.userId}}).then(function(user){
+      if(user){
+        user.getFavoriteSongs().then(function(favorites){
+          if(favorites){
+            callback(null, favorites);
+          }
+          else{
+            callback(null, {favs: {trackTitle: "ahh", trackArtist : "uhh"}});
+          }
+          //res.render('profile', {superfav: superfav, favorites: favorites});
+        });  
+      }
+      else{
+        callback(null, {favs: {trackTitle: "ahh", trackArtist : "uhh"}});
+      }
+  });
+}
+
 app.get('/', function(req, res) {
   if(req.session.isLoggedIn){
     currentUserId = req.currentUser.Id;
-    console.log(req.session);
   }
 
-  async.series([getCurrentTrack, getLatestPlays], function(err, results){
-    if(results[0].Artist == null){
+
+  async.series([getCurrentTrack, getLatestPlays, getFavorites], function(err, results){
+    if(results[0].Artist == undefined){
       var airBreak = {Artist: {Name: "Air Break"}, Track : {Name: "-"}};
-      console.log(session);
-      res.render('index', {currentSong: airBreak, recentPlays: results[1]});
+      console.log(results);
+      res.render('index', {currentSong: airBreak, recentPlays: results[1], favorites: results[2]});
     }
     else{
-      res.render('index', {currentSong: results[0], recentPlays: results[1]});
+      console.log(results);
+      res.render('index', {currentSong: results[0], recentPlays: results[1], favorites: results[2]});
     }
   });
 });
 
 app.get('/profile', isLoggedIn, function(req, res) {
-  console.log(req.user.email);
   db.user.findOne({where: {email: req.user.email}}).then(function(user){
-    user.getFavoriteSongs().then(function(favorites){
-      res.render('profile', {favorites: favorites});
+    db.favoriteSong.findOne({where :{id: req.user.superfav}}).then(function(superfav){  
+      user.getFavoriteSongs().then(function(favorites){
+        res.render('profile', {superfav: superfav, favorites: favorites});
+      });
     });
   });
   
@@ -109,12 +131,7 @@ function getDateNumber(dateData){
 
 
 io.on('connection', function (socket) {
-  console.log('connected back end');
-  socket.emit('news', function(){
-    console.log("connection on");
-  });
   socket.on('clickedFav', function (data) {
-    console.log("got frontend data" + data);
     addSongToFavorites(data);
   });
 });
@@ -133,7 +150,6 @@ function addSongToFavorites(data){
     if (!error && response.statusCode == 200) {
       data = JSON.parse(body);
       favedSong = data.Plays[0];
-      console.log(favedSong.Track.Name, "-", favedSong.Artist.Name);
       if(process.env.userId){
         db.favoriteSong.create({
           trackTitle: favedSong.Track.Name,
@@ -144,7 +160,6 @@ function addSongToFavorites(data){
             db.user.findOne({where: {id: process.env.userId}}).then(function(user){
               user.addFavoriteSong(data);
             });
-          console.log("added song to db" + favedSong.Track.Name);
         });
       }
       else{
@@ -191,9 +206,3 @@ app.put('/superfav/:songid', function(req, res){
 
 
 });
-/*
-GET /
-GET /Profile
-GET /auth/login
-GET /auth/signup
-*/

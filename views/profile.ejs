@@ -1,9 +1,14 @@
 <h2>My Favorites</h2>
-
+<div class="well player">
+<h3>Current super-fav:</h3> 
+<h3><%= superfav.trackTitle %> by <%= superfav.trackArtist %></h3>
+</div>
+<div class="well">
 <% favorites.forEach(function(song){ %>
-<h4><%= song.trackTitle %> - <%= song.trackArtist %> </h4>
+<h4><%= song.trackTitle %> - <%= song.trackArtist %> - album <%=  %></h4>
 <a href="/delete/<%=song.id%>" class="btn btn-danger delete-link"><i class="fa fa-trash-o"></i> Trash this Track </a> 
 <a href="/superfav/<%=song.id%>" class="btn btn-info super-fav"><i class="fa fa-star"></i> This is my favorite </a>
 <% }); %>
+</div>
 <br>
-<a href="/">Home</a>
+<a href="/" class="btn btn-info">Home</a>

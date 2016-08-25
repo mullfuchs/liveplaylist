@@ -6,10 +6,11 @@ $( document ).ready(function() {
 
   socket.on('connect', function() {
      console.log('Connected front end');
-    $('.btn').on('click', function() {
+    $('.fav-this-song').on('click', function() {
       var link = $(this).attr("data-song");
       console.log('clicked' + link);
       socket.emit('clickedFav', link);
+      $('.recent-favs').append("<p>" + $(this).attr("data-track") + "</p>");
     });
   });
 

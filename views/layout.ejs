@@ -4,20 +4,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KEXP Live Playlist</title>
-
+    <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+    
     <script src="https://use.fontawesome.com/fe8c79deec.js"></script>
     <script src="//code.jquery.com/jquery.js"></script>
     <!-- Latest compiled and minified CSS & JS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/frontend.js"></script>
 
   </head>
   <body>
     <div class="container">
-    <p><strong><%- JSON.stringify(currentUser) %></strong></p>
-
+<!--     <p><strong><%- JSON.stringify(currentUser) %></strong></p> -->
+      
+      <% if(currentUser){ %>
+        <h4>Hi, <%= currentUser.name %> </h4>
+      <% } %>
+      
       <% if(alerts.error){ %>
         <% alerts.error.forEach(function(msg){ %>
           <div class="alert alert-danger"><%= msg %></div>

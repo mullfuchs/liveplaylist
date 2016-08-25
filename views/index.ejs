@@ -8,7 +8,7 @@
 
 <h2>Now Playing</h2>
 
-<div class="well">
+<div class="well player">
 
 <audio controls>
   <source src="http://live-aacplus-64.kexp.org/kexp64.aac" type="audio/mp4" />
@@ -22,7 +22,7 @@
   <div class="well">
   <% recentPlays.Plays.forEach(function(song){ %>
   <% if(song.Artist) { %>
-  <h4> <a href="#" data-song="<%= song.CreatedDate %>" class="btn btn-danger"> <i class="fa fa-heart"></i> </a>  <%=  song.Artist.Name %> - <%=  song.Track.Name %> </h4>
+  <h4> <a href="#" data-song="<%= song.CreatedDate %>" data-track="<%=  song.Artist.Name %> - <%=  song.Track.Name %>" class="btn btn-danger fav-this-song"> <i class="fa fa-heart"></i> </a>  <%=  song.Artist.Name %> - <%=  song.Track.Name %> </h4>
 
   <hr>
    <% } %>
@@ -30,6 +30,17 @@
   </div>
 
 </div>
+
+  <div class="col-md-4">
+    <div class="well recent-favs">
+      <h4>recent favs go here</h4>
+      <% if(favorites.length >= 1) {%>
+      <% favorites.forEach(function(song){ %>
+        <p><%= song.trackTitle %> - <%= song.trackArtist %>  </p>
+      <% }); %>
+      <% } %>
+    </div>
+  </div>
 </div>
 
 
