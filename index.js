@@ -188,7 +188,7 @@ app.delete('/delete/:songid', function(req, res) {
   db.favoriteSong.destroy({
     where: {id : songToDelete}
   }).then(function(){
-    res.redirect('/');
+    res.send('doin things');
   });
   
 });
@@ -205,7 +205,7 @@ app.put('/superfav/:songid', function(req, res){
     }
   }).then(function(user) {
     // do something when done updating
-    res.redirect('/');
+    res.send('doin stuff');
   });
 
 

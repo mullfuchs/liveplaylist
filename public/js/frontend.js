@@ -22,7 +22,8 @@ $( document ).ready(function() {
       method: 'DELETE',
       url: songUrl
     }).done(function(data) {
-      songElement.remove();
+      songElement.parent().remove();
+      window.location = "/profile";
     });
   });
 
@@ -32,6 +33,8 @@ $( document ).ready(function() {
     $.ajax({
       method: 'PUT',
       url: songUrl
+    }).done(function(){
+      window.location = "/profile";
     });
   });
 
