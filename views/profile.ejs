@@ -1,7 +1,9 @@
 <h2>My Favorites</h2>
 <div class="well player">
 <h3>Current super-fav:</h3> 
+<% if(superfav) {%>
 <h3><%= superfav.trackTitle %> by <%= superfav.trackArtist %></h3>
+<% } %>
 </div>
 <div class="well">
 <% favorites.forEach(function(song){ %>

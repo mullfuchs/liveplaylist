@@ -102,11 +102,9 @@ app.get('/', function(req, res) {
   async.series([getCurrentTrack, getLatestPlays, getFavorites], function(err, results){
     if(results[0].Artist == undefined){
       var airBreak = {Artist: {Name: "Air Break"}, Track : {Name: "-"}};
-      console.log(results);
       res.render('index', {currentSong: airBreak, recentPlays: results[1], favorites: results[2]});
     }
     else{
-      console.log(results);
       res.render('index', {currentSong: results[0], recentPlays: results[1], favorites: results[2]});
     }
   });
@@ -186,18 +184,18 @@ function formatDateForQuery(dateNumber){
 
 app.delete('/delete/:songid', function(req, res) {
   var songToDelete = req.params.songid;
-  console.log('delete route for ' + songToDelete);
+  //console.log('delete route for ' + songToDelete);
   db.favoriteSong.destroy({
     where: {id : songToDelete}
   }).then(function(){
-    res.redirect('localhost:3000/profile');
+    res.redirect('/');
   });
   
 });
 
 app.put('/superfav/:songid', function(req, res){
   var songToUpdate = req.params.songid;
-  console.log('adding superfav ' + songToUpdate);
+  //console.log('adding superfav ' + songToUpdate);
 
   db.user.update({
     superfav: songToUpdate
@@ -207,6 +205,7 @@ app.put('/superfav/:songid', function(req, res){
     }
   }).then(function(user) {
     // do something when done updating
+    res.redirect('/');
   });
 
 
