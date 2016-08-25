@@ -9,7 +9,7 @@ var isLoggedIn = require('./middleware/isLoggedIn');
 var async = require('async');
 var fs = require('fs');
 var db = require('./models');
-var $ = require('jQuery');
+//var $ = require('jQuery');
 
 //require('events').EventEmitter.prototype._maxListeners = 100;
 var currentUserId;
@@ -138,9 +138,14 @@ io.on('connection', function (socket) {
 
 var PORT = process.env.PORT || 3000;
 
-http.listen(PORT, function() {
-  console.log('Running server on ' + PORT);
+// http.listen(PORT, function() {
+//   console.log('Running server on ' + PORT);
+// });
+
+http.listen(process.env.PORT || 3000, function(){
+  console.log('listening on', http.address().port);
 });
+
 
 function addSongToFavorites(data){
   var dateNumber = getDateNumber(data);
