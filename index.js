@@ -8,10 +8,11 @@ var request = require('request');
 var isLoggedIn = require('./middleware/isLoggedIn');
 var async = require('async');
 var fs = require('fs');
-var frontend = require('./public/js/frontend');
+var db = require('./models');
 var $ = require('jQuery');
 
 //require('events').EventEmitter.prototype._maxListeners = 100;
+var currentUserId;
 
 var app = express();
 
@@ -19,11 +20,13 @@ var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
+
 app.set('view engine', 'ejs');
 
 app.use(require('morgan')('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(ejsLayouts);
+app.use(express.static('public'));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "DLKAJSFEIOEJ69QSDFGSDLFGD43FGRER",
@@ -71,38 +74,49 @@ function getLatestPlays(callback){
 }
 
 app.get('/', function(req, res) {
+  if(req.session.isLoggedIn){
+    currentUserId = req.currentUser.Id;
+    console.log(req.session);
+  }
+
   async.series([getCurrentTrack, getLatestPlays], function(err, results){
-    res.render('index', {currentSong: results[0], recentPlays: results[1]});
+    if(results[0].Artist.Name == null){
+      var airBreak = {Artist: {Name: "Air Break"}, Track : {Name: "-"}};
+      console.log(session);
+      res.render('index', {currentSong: airBreak, recentPlays: results[1]});
+    }
+    else{
+      res.render('index', {currentSong: results[0], recentPlays: results[1]});
+    }
   });
 });
 
 app.get('/profile', isLoggedIn, function(req, res) {
-  res.render('profile');
-});
-
-app.get('/addfav/:date', function(req, res){
-  console.log('clicked fav button');
-  console.log(getDateNumber(req.params.date));
+  console.log(req.user.email);
+  db.user.findOne({where: {email: req.user.email}}).then(function(user){
+    user.getFavoriteSongs().then(function(favorites){
+      res.render('profile', {favorites: favorites});
+    });
+  });
+  
 });
 
 app.use('/auth', require('./controllers/auth'));
 
-//var server = app.listen(process.env.PORT || 3000);
-
-//module.exports = server;
-
-
 function getDateNumber(dateData){
-  return dateData[0].match(/[0-9]+/g);
+  return dateData.match(/[0-9]+/g);
 }
 
 
+
 io.on('connection', function (socket) {
+  console.log('connected back end');
   socket.emit('news', function(){
     console.log("connection on");
   });
-  socket.on('my other event', function (data) {
-    console.log("index.js" + data);
+  socket.on('clickedFav', function (data) {
+    console.log("got frontend data" + data);
+    addSongToFavorites(data);
   });
 });
 
@@ -112,6 +126,44 @@ http.listen(PORT, function() {
   console.log('Running server on ' + PORT);
 });
 
+function addSongToFavorites(data){
+  var dateNumber = getDateNumber(data);
+  var dateString = formatDateForQuery(dateNumber);
+  var favedSong;
+  request('http://cache.kexp.org/cache/plays?startTime=' + dateString, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      data = JSON.parse(body);
+      favedSong = data.Plays[0];
+      console.log(favedSong.Track.Name, "-", favedSong.Artist.Name);
+      if(process.env.userId){
+        db.favoriteSong.create({
+          trackTitle: favedSong.Track.Name,
+          trackArtist: favedSong.Artist.Name,
+          albumName: favedSong.Release.Name,
+          userId: process.env.userId
+        }).then(function(data){
+            db.user.findOne({where: {id: process.env.userId}}).then(function(user){
+              user.addFavoriteSong(data);
+            });
+          console.log("added song to db" + favedSong.Track.Name);
+        });
+      }
+      else{
+
+      }
+    }
+    else{
+      favedSong = null;
+    }
+
+  });
+}
+
+function formatDateForQuery(dateNumber){
+  var songDate = new Date(0);
+  songDate.setUTCMilliseconds(dateNumber);
+  return(songDate.toISOString());
+}
 
 /*
 GET /

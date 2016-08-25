@@ -1,12 +1,21 @@
-console.log('app.js');
+$( document ).ready(function() {
 
-// var socket = io();
+  console.log('loaded front end js');
 
-//  socket.on('connect', function() {
-//    console.log('Connected!');
-//  });
+  var socket = io();
+
+  socket.on('connect', function() {
+     console.log('Connected front end');
+    $('.btn').on('click', function() {
+      var link = $(this).attr("data-song");
+      console.log('clicked' + link);
+      socket.emit('clickedFav', link);
+    });
+  });
 
 
+
+});
 // var io = require('socket.io')(app);
 // var fs = require('fs');
 

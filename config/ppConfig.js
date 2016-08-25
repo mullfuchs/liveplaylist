@@ -23,6 +23,7 @@ passport.use(new LocalStrategy({
     if(!user || !user.validPassword(password)){
       cb(null, false);
     } else {
+      process.env.userId = user.id;
       cb(null, user);
     }
   }).catch(cb);
