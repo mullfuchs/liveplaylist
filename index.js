@@ -80,7 +80,7 @@ app.get('/', function(req, res) {
   }
 
   async.series([getCurrentTrack, getLatestPlays], function(err, results){
-    if(results[0].Artist.Name == null){
+    if(results[0].Artist == null){
       var airBreak = {Artist: {Name: "Air Break"}, Track : {Name: "-"}};
       console.log(session);
       res.render('index', {currentSong: airBreak, recentPlays: results[1]});
@@ -106,7 +106,6 @@ app.use('/auth', require('./controllers/auth'));
 function getDateNumber(dateData){
   return dateData.match(/[0-9]+/g);
 }
-
 
 
 io.on('connection', function (socket) {
@@ -164,6 +163,17 @@ function formatDateForQuery(dateNumber){
   songDate.setUTCMilliseconds(dateNumber);
   return(songDate.toISOString());
 }
+
+app.delete('/delete/:songid', function(req, res) {
+  var songToDelete = req.params.songid;
+  console.log('delete route for ' + songToDelete);
+  db.favoriteSong.destroy({
+    where: {id : songToDelete}
+  }).then(function(){
+    res.redirect('localhost:3000/profile');
+  });
+  
+});
 
 /*
 GET /
