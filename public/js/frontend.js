@@ -18,13 +18,21 @@ $( document ).ready(function() {
   var songElement = $(this);
   var songUrl = songElement.attr('href');
   $.ajax({
-    method: 'DELETE',
-    url: songUrl
-  }).done(function(data) {
-    songElement.remove();
+      method: 'DELETE',
+      url: songUrl
+    }).done(function(data) {
+      songElement.remove();
+    });
   });
-});
 
+  $('.super-fav').on('click', function(e){
+    e.preventDefault();
+    var songUrl = $(this).attr('href');
+    $.ajax({
+      method: 'PUT',
+      url: songUrl
+    });
+  });
 
 
 });

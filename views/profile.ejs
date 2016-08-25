@@ -3,7 +3,7 @@
 <% favorites.forEach(function(song){ %>
 <h4><%= song.trackTitle %> - <%= song.trackArtist %> </h4>
 <a href="/delete/<%=song.id%>" class="btn btn-danger delete-link"><i class="fa fa-trash-o"></i> Trash this Track </a> 
-<a href="/superfav/<%=song.id%>" class="btn btn-info"><i class="fa fa-star"></i> This is my favorite </a>
+<a href="/superfav/<%=song.id%>" class="btn btn-info super-fav"><i class="fa fa-star"></i> This is my favorite </a>
 <% }); %>
-
+<br>
 <a href="/">Home</a>

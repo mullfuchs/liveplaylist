@@ -29,7 +29,8 @@ module.exports = function(sequelize, DataTypes) {
           msg: "Password must be between 8 and 99 characters"
         }
       }
-    }
+    },
+    superfav: DataTypes.INTEGER
   }, {
     hooks: {
       beforeCreate: function(createdUser, options, cb) {

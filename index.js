@@ -175,6 +175,22 @@ app.delete('/delete/:songid', function(req, res) {
   
 });
 
+app.put('/superfav/:songid', function(req, res){
+  var songToUpdate = req.params.songid;
+  console.log('adding superfav ' + songToUpdate);
+
+  db.user.update({
+    superfav: songToUpdate
+  }, {
+    where: {
+      id: process.env.userId
+    }
+  }).then(function(user) {
+    // do something when done updating
+  });
+
+
+});
 /*
 GET /
 GET /Profile
