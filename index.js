@@ -65,7 +65,15 @@ function getLatestPlays(callback){
   request('http://cache.kexp.org/cache/recentPlays', function(error, response, body) {
       if(!error && response.statusCode == 200){
         recentPlays = JSON.parse(body);
+        recentPlays.Plays.forEach(function(play){
+          if(!play.Artist){
+            play = {Artist: {Name: "Air Break"}, Track : {Name: "-"}}
+            console.log('found dead air');
+          }
+        });
+        //console.log(recentPlays);
         callback(null, recentPlays);
+
       }
       else{
         callback(error, recentPlays);
@@ -100,7 +108,7 @@ app.get('/', function(req, res) {
 
 
   async.series([getCurrentTrack, getLatestPlays, getFavorites], function(err, results){
-    if(results[0].Artist == undefined){
+    if(results[0].Artist == null){
       var airBreak = {Artist: {Name: "Air Break"}, Track : {Name: "-"}};
       res.render('index', {currentSong: airBreak, recentPlays: results[1], favorites: results[2]});
     }
@@ -120,6 +128,21 @@ app.get('/profile', isLoggedIn, function(req, res) {
   });
   
 });
+
+// app.get('/superfavs', function(req, res){
+//   usersAndFavorites = [];  
+//   db.user.findAll({ WHERE: superfav > -1}).then(function(users){
+//     users.forEach(function(user){
+//       db.favoriteSong.findOne({WHERE: {id: user.superfav}}).then(function(superfav){
+//         usersAndFavorites.push({
+//           userName: user.name,
+//           superfav: superfav
+//         });
+//       });
+//     });
+//     res.render('superfav', {userFavorites: usersAndFavorites});
+//   });
+// });
 
 app.use('/auth', require('./controllers/auth'));
 

@@ -21,7 +21,7 @@
 <div class="col-md-8">
   <div class="well">
   <% recentPlays.Plays.forEach(function(song){ %>
-  <% if(song.Artist) { %>
+  <% if(song.Type === 1) { %>
   <h4> <a href="#" data-song="<%= song.CreatedDate %>" data-track="<%=  song.Artist.Name %> - <%=  song.Track.Name %>" class="btn btn-danger fav-this-song"> <i class="fa fa-heart"></i> </a>  <%=  song.Artist.Name %> - <%=  song.Track.Name %> </h4>
 
   <hr>
